@@ -68,6 +68,15 @@ impl CPU {
             0x0000 => {
                 self.pc += 2;
             },
+            // 2NNN: Calls subroutine at NNN
+            0x2000 => {
+                // TODO call subroutine
+                let jump_loc = self.opcode & 0x0FFF;
+
+                self.stack[self.sp as usize] = self.pc;
+                self.sp += 1;
+                self.pc = jump_loc;
+            },
             // 3XNN: Skip next instruction if VX equals NN
             0x3000 => {
                 let VX = ((self.opcode & 0x0F00) >> 8) as usize;
