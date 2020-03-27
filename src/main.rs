@@ -106,6 +106,12 @@ impl CPU {
             // FNNN: Opcodes for F parsed here
             0xF000 => {
                 match self.opcode & 0x00FF {
+                    // FX29: Sets I to the location of sprite in VX
+                    0x0029 => {
+                        let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                        self.I = self.V[VX];
+                        self.pc += 2;
+                    },
                     // FX33: Store binary-coded decimal values in memory
                     // Hundreds digit in memory location I
                     // Tens digit in memory location I+1
