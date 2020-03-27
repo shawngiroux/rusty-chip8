@@ -1,6 +1,6 @@
 use std::io::Read;
-// use std::io::prelude::*;
 use std::fs::File;
+use std::process;
 
 struct CPU {
     // Chip 8 has 35 opcodes
@@ -73,6 +73,7 @@ impl CPU {
             _ => {
                 println!("Undetermined Opcode!");
                 CPU::debug_opcode(self.opcode, decode);
+                process::exit(0x0100);
             }
         }
     }
@@ -86,5 +87,7 @@ impl CPU {
 fn main() {
     let path = "/home/calico/Programming/rust/rusty-chip8/pong.ch8";
     let mut cpu = CPU::initialize(path);
-    cpu.emulate_cycle();
+    loop {
+        cpu.emulate_cycle();
+    }
 }
