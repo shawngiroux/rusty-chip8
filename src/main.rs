@@ -70,6 +70,14 @@ impl CPU {
                 self.I = self.opcode & 0x0FFF;
                 self.pc += 2;
             },
+            0x3000 => {
+                let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                if self.V[VX] == self.opcode & 0x00FF {
+                    self.pc += 4;
+                } else {
+                    self.pc += 2;
+                }
+            }
             _ => {
                 println!("Undetermined Opcode!");
                 CPU::debug_opcode(self.opcode, decode);
