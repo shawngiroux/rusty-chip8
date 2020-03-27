@@ -89,7 +89,7 @@ impl CPU {
             // 6XNN: Sets VX to NN
             0x6000 => {
                 let VX = ((self.opcode & 0x0F00) >> 8) as usize;
-                let NN = (self.opcode & 0x00FF);
+                let NN = self.opcode & 0x00FF;
                 self.V[VX] = NN;
                 self.pc += 2;
             },
