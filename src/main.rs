@@ -135,7 +135,7 @@ impl CPU {
 }
 
 fn main() {
-    let path = "/home/calico/Programming/rust/rusty-chip8/pong.ch8";
+    let path = "pong.ch8";
     let mut cpu = CPU::initialize(path);
     loop {
         cpu.emulate_cycle();
