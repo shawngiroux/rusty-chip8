@@ -106,11 +106,24 @@ impl CPU {
             // FNNN: Opcodes for F parsed here
             0xF000 => {
                 match self.opcode & 0x00FF {
-                    // FX33
+                    // FX33: Store binary-coded decimal values in memory
+                    // Hundreds digit in memory location I
+                    // Tens digit in memory location I+1
+                    // Ones digit in memory location I+2
                     0x0033 => {
-                        // TODO
                         let VX = ((self.opcode & 0x0F00) >> 8) as usize;
-                        let binary_coded_decimal = self.V[VX];
+                        let padded_decimal = format!("{:03}", self.V[VX]);
+
+                        // Iterate through binary-coded decimal values
+                        let mut count = 0;
+                        for bcd in padded_decimal.chars() {
+                            let memory_index = (self.I + count) as usize;
+                            self.memory[memory_index] = bcd as u16;
+                            count += 1;
+
+                        }
+
+                        self.pc += 2;
                     },
                     _ => {
                         println!("Undetermined Opcode!");
