@@ -103,6 +103,22 @@ impl CPU {
                 // TODO draw sprite
                 self.pc += 2;
             },
+            // FNNN: Opcodes for F parsed here
+            0xF000 => {
+                match self.opcode & 0x00FF {
+                    // FX33
+                    0x0033 => {
+                        // TODO
+                        let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                        let binary_coded_decimal = self.V[VX];
+                    },
+                    _ => {
+                        println!("Undetermined Opcode!");
+                        CPU::debug_opcode(self.opcode, decode);
+                        process::exit(0x0100);
+                    }
+                }
+            },
             // Exit and print last opcode
             _ => {
                 println!("Undetermined Opcode!");
