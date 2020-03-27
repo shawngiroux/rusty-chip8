@@ -63,13 +63,16 @@ impl CPU {
 
         let decode = self.opcode & 0xF000;
         match decode {
+            // 0NNN: Jump to machine code routine - Interpreter will ignore
             0x0000 => {
-                CPU::debug_opcode(self.opcode, decode);
-            }
+                self.pc += 2;
+            },
+            // ANNN: Set I to address at NNN
             0xA000 => {
                 self.I = self.opcode & 0x0FFF;
                 self.pc += 2;
             },
+            // 3XNN: Skip next instruction if VX equals NN
             0x3000 => {
                 let VX = ((self.opcode & 0x0F00) >> 8) as usize;
                 if self.V[VX] == self.opcode & 0x00FF {
@@ -78,6 +81,7 @@ impl CPU {
                     self.pc += 2;
                 }
             }
+            // Exit and print last opcode
             _ => {
                 println!("Undetermined Opcode!");
                 CPU::debug_opcode(self.opcode, decode);
