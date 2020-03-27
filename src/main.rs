@@ -86,9 +86,21 @@ impl CPU {
                     self.pc += 2;
                 }
             },
+            // 6XNN: Sets VX to NN
+            0x6000 => {
+                let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                let NN = (self.opcode & 0x00FF);
+                self.V[VX] = NN;
+                self.pc += 2;
+            },
             // ANNN: Set I to address at NNN
             0xA000 => {
                 self.I = self.opcode & 0x0FFF;
+                self.pc += 2;
+            },
+            // DXYN: Draw at (Vx, Vy, N)
+            0xD000 => {
+                // TODO draw sprite
                 self.pc += 2;
             },
             // Exit and print last opcode
