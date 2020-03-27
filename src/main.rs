@@ -57,8 +57,9 @@ impl CPU {
     fn emulate_cycle(&mut self) {
         // Opcodes are stored in two memory locations
         // We need both to get the full opcode
-        let opcode_pt_2 = self.pc as usize;
-        let opcode_pt_1 = (self.pc + 1) as usize;
+        let opcode_pt_1 = self.pc as usize;
+        let opcode_pt_2 = (self.pc + 1) as usize;
+
         self.opcode = self.memory[opcode_pt_1] << 8 | self.memory[opcode_pt_2];
 
         let decode = self.opcode & 0xF000;
