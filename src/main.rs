@@ -67,11 +67,6 @@ impl CPU {
             0x0000 => {
                 self.pc += 2;
             },
-            // ANNN: Set I to address at NNN
-            0xA000 => {
-                self.I = self.opcode & 0x0FFF;
-                self.pc += 2;
-            },
             // 3XNN: Skip next instruction if VX equals NN
             0x3000 => {
                 let VX = ((self.opcode & 0x0F00) >> 8) as usize;
@@ -80,7 +75,12 @@ impl CPU {
                 } else {
                     self.pc += 2;
                 }
-            }
+            },
+            // ANNN: Set I to address at NNN
+            0xA000 => {
+                self.I = self.opcode & 0x0FFF;
+                self.pc += 2;
+            },
             // Exit and print last opcode
             _ => {
                 println!("Undetermined Opcode!");
