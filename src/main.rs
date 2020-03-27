@@ -46,7 +46,7 @@ impl CPU {
         CPU {
             opcode: 0,
             memory: memory,
-            V: [0; 16],
+            V: [0x0000; 16],
             I: 0,
             pc: 0x200,
             stack: [0x0000; 16],
