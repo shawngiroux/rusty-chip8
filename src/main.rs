@@ -172,6 +172,12 @@ impl CPU {
         println!("Opcode: {:#06x}", opcode);
         println!("Decode: {:#06x}", decode)
     }
+
+    fn debug_cpu_registers(V: [u16; 16]) {
+        for (i, code) in V.iter().enumerate() {
+            println!("V[{}]: {:#06x}", i, code);
+        }
+    }
 }
 
 fn main() {
