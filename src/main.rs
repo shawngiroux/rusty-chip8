@@ -68,6 +68,11 @@ impl CPU {
             0x0000 => {
                 self.pc += 2;
             },
+            // 1NNN: Jumps to address NNN.
+            0x1000 => {
+                let jump_loc = self.opcode & 0x0FFF;
+                self.pc = jump_loc;
+            }
             // 2NNN: Calls subroutine at NNN
             0x2000 => {
                 // TODO call subroutine
