@@ -1,5 +1,5 @@
-use std::io::Read;
 use std::fs::File;
+use std::io::Read;
 use std::process;
 
 struct CPU {
@@ -50,7 +50,7 @@ impl CPU {
             I: 0,
             pc: 0x200,
             stack: [0x0000; 16],
-            sp: 0
+            sp: 0,
         }
     }
 
@@ -83,7 +83,7 @@ impl CPU {
                 self.stack[self.sp as usize] = self.pc;
                 self.sp += 1;
                 self.pc = jump_loc;
-            },
+            }
             // 3XNN: Skip next instruction if VX equals NN
             0x3000 => {
                 let VX = ((self.opcode & 0x0F00) >> 8) as usize;
@@ -92,14 +92,14 @@ impl CPU {
                 } else {
                     self.pc += 2;
                 }
-            },
+            }
             // 6XNN: Sets VX to NN
             0x6000 => {
                 let VX = ((self.opcode & 0x0F00) >> 8) as usize;
                 let NN = self.opcode & 0x00FF;
                 self.V[VX] = NN;
                 self.pc += 2;
-            },
+            }
             // 7XNN: Adds NN to VX
             0x7000 => {
                 let VX = ((self.opcode & 0x0F00) >> 8) as usize;
@@ -111,12 +111,12 @@ impl CPU {
             0xA000 => {
                 self.I = self.opcode & 0x0FFF;
                 self.pc += 2;
-            },
+            }
             // DXYN: Draw at (Vx, Vy, N)
             0xD000 => {
                 // TODO draw sprite
                 self.pc += 2;
-            },
+            }
             // FNNN: Opcodes for F parsed here
             0xF000 => {
                 match self.opcode & 0x00FF {
@@ -125,7 +125,7 @@ impl CPU {
                         let VX = ((self.opcode & 0x0F00) >> 8) as usize;
                         self.I = self.V[VX];
                         self.pc += 2;
-                    },
+                    }
                     // FX33: Store binary-coded decimal values in memory
                     // Hundreds digit in memory location I
                     // Tens digit in memory location I+1
@@ -140,11 +140,10 @@ impl CPU {
                             let memory_index = (self.I + count) as usize;
                             self.memory[memory_index] = bcd as u16;
                             count += 1;
-
                         }
 
                         self.pc += 2;
-                    },
+                    }
                     // FX65: Fill V0 to VX with values starting from memory I
                     // I is increased by 1 each cycle, but is left unmodified
                     0x0065 => {
@@ -158,14 +157,14 @@ impl CPU {
                         }
 
                         self.pc += 2;
-                    },
+                    }
                     _ => {
                         println!("Undetermined Opcode!");
                         CPU::debug_opcode(self.opcode, decode);
                         process::exit(0x0100);
                     }
                 }
-            },
+            }
             // Exit and print last opcode
             _ => {
                 println!("Undetermined Opcode!");
