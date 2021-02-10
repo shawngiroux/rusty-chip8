@@ -108,6 +108,52 @@ impl CPU {
                 let NN = self.opcode & 0x00FF;
                 self.V[VX] += NN;
                 self.pc += 2;
+            }
+            0x8000 => match self.opcode & 0x000F {
+                // Sets VX to value of VY
+                0x0000 => {
+                    let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                    let VY = ((self.opcode & 0x00F0) >> 4) as usize;
+                    let VY = self.V[VY];
+                    self.V[VX] = VY;
+                    self.pc += 2;
+                }
+                0x0001 => {
+                    CPU::debug_opcode(self.opcode, decode);
+                    process::exit(0x0100);
+                }
+                0x0002 => {
+                    CPU::debug_opcode(self.opcode, decode);
+                    process::exit(0x0100);
+                }
+                // 8XY3: Sets VX to VX xor VY
+                0x0003 => {
+                    let VX = (self.opcode & 0x0F00) >> 8;
+                    let VY = (self.opcode & 0x00F0) >> 4;
+                    self.V[VX as usize] = VX ^ VY;
+                    self.pc += 2;
+                }
+                0x0004 => {
+                    CPU::debug_opcode(self.opcode, decode);
+                    process::exit(0x0100);
+                }
+                0x0005 => {
+                    CPU::debug_opcode(self.opcode, decode);
+                    process::exit(0x0100);
+                }
+                0x0006 => {
+                    CPU::debug_opcode(self.opcode, decode);
+                    process::exit(0x0100);
+                }
+                0x0007 => {
+                    CPU::debug_opcode(self.opcode, decode);
+                    process::exit(0x0100);
+                }
+                _ => {
+                    println!("0x8XYN Undetermined Opcode!");
+                    CPU::debug_opcode(self.opcode, decode);
+                    process::exit(0x0100);
+                }
             },
             // ANNN: Set I to address at NNN
             0xA000 => {
