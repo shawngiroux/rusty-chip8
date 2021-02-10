@@ -17,6 +17,7 @@ struct CPU {
     // I and Program Counter
     I: u16,
     pc: u16,
+    k: u16,
 
     // Maintains current location
     // before jumps are performed
@@ -51,6 +52,7 @@ impl CPU {
             pc: 0x200,
             stack: [0x0000; 16],
             sp: 0,
+            k: 0,
         }
     }
 
@@ -116,6 +118,25 @@ impl CPU {
             0xD000 => {
                 // TODO draw sprite
                 self.pc += 2;
+            }
+            0xE000 => {
+                match self.opcode & 0x00FF {
+                    // EXA1: Skips the next instruction if the key stored in VX isn't
+                    // pressed. (Usually the next instruction is a jump to skip a code block)
+                    0x00a1 => {
+                        let VX = (self.opcode & 0x0F00) >> 8;
+                        if VX == self.k {
+                            self.pc += 4;
+                        } else {
+                            self.pc += 2;
+                        }
+                    }
+                    _ => {
+                        println!("Undetermined Opcode!");
+                        CPU::debug_opcode(self.opcode, decode);
+                        process::exit(0x0100);
+                    }
+                }
             }
             // FNNN: Opcodes for F parsed here
             0xF000 => {
