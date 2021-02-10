@@ -36,12 +36,12 @@ impl CPU {
         let mut memory: [u16; 4096] = [0x0000; 4096];
 
         for (i, _) in buffer.iter().enumerate() {
-            // println!("pos {}: {:#06x}", i, buf)
+            // println!("pos {}: {:#06x}", i, buffer[i]);
             memory[i + 512] = buffer[i].into();
         }
 
-        // for (i, buf) in memory.iter().enumerate() {
-        //     println!("pos {}: {:#06x}", i, buf)
+        // for (i, buf) in memory[..511].iter().enumerate() {
+        // println!("pos {}: {:#06x}", i, buf)
         // }
 
         CPU {
@@ -79,7 +79,6 @@ impl CPU {
             }
             // 2NNN: Calls subroutine at NNN
             0x2000 => {
-                // TODO call subroutine
                 let jump_loc = self.opcode & 0x0FFF;
 
                 self.stack[self.sp as usize] = self.pc;
@@ -162,8 +161,9 @@ impl CPU {
             }
             // DXYN: Draw at (Vx, Vy, N)
             0xD000 => {
-                // TODO draw sprite
                 self.pc += 2;
+                CPU::debug_opcode(self.opcode, decode);
+                process::exit(0x0100);
             }
             0xE000 => {
                 match self.opcode & 0x00FF {
@@ -233,7 +233,7 @@ impl CPU {
                         self.pc += 2;
                     }
                     _ => {
-                        println!("Undetermined Opcode!");
+                        println!("2) Undetermined Opcode!");
                         CPU::debug_opcode(self.opcode, decode);
                         process::exit(0x0100);
                     }
@@ -241,7 +241,7 @@ impl CPU {
             }
             // Exit and print last opcode
             _ => {
-                println!("Undetermined Opcode!");
+                println!("1) Undetermined Opcode!");
                 CPU::debug_opcode(self.opcode, decode);
                 process::exit(0x0100);
             }
