@@ -231,6 +231,20 @@ impl CPU {
 
                         self.pc += 2;
                     }
+                    // FX55: Stores V0 to VX (including VX) in memory starting at
+                    // address I. The offset from I is increased by 1 for each value
+                    // written, but I itself is left unmodified.[d]
+                    0x0055 => {
+                        let VX = (self.opcode & 0x0F00) >> 8;
+                        for x in 0..VX + 1 {
+                            let V_index = x as usize;
+                            let old_V = self.V[V_index];
+                            let memory_index = (self.I + x) as usize;
+                            self.memory[memory_index] = self.V[x as usize];
+                        }
+
+                        self.pc += 2;
+                    }
                     // FX65: Fill V0 to VX with values starting from memory I
                     // I is increased by 1 each cycle, but is left unmodified
                     0x0065 => {
