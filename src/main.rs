@@ -66,12 +66,25 @@ impl CPU {
 
         let decode = self.opcode & 0xF000;
         match decode {
-            // 0NNN: Jump to machine code routine - Interpreter will ignore
-            0x0000 => {
-                // TODO Jump to machine code routine
-                CPU::debug_opcode(self.opcode, decode);
-                process::exit(0x0100);
-            }
+            0x0000 => match self.opcode & 0x00FF {
+                // 00E0: Clears the screen
+                0x00E0 => {
+                    // TODO
+                    CPU::debug_opcode(self.opcode, decode);
+                    process::exit(0x0100);
+                }
+                // 00EE Returns from a subroutine
+                0x0EE => {
+                    self.sp -= 1;
+                    self.pc = self.stack[self.sp as usize];
+                }
+                // 0NNN: Jump to machine code routine - Interpreter will ignore
+                _ => {
+                    // TODO Jump to machine code routine
+                    CPU::debug_opcode(self.opcode, decode);
+                    process::exit(0x0100);
+                }
+            },
             // 1NNN: Jumps to address NNN.
             0x1000 => {
                 let jump_loc = self.opcode & 0x0FFF;
