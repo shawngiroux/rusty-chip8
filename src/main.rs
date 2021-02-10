@@ -66,8 +66,10 @@ impl CPU {
         match decode {
             // 0NNN: Jump to machine code routine - Interpreter will ignore
             0x0000 => {
-                self.pc += 2;
-            },
+                // TODO Jump to machine code routine
+                CPU::debug_opcode(self.opcode, decode);
+                process::exit(0x0100);
+            }
             // 1NNN: Jumps to address NNN.
             0x1000 => {
                 let jump_loc = self.opcode & 0x0FFF;
