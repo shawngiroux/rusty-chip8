@@ -120,6 +120,13 @@ impl CPU {
             // FNNN: Opcodes for F parsed here
             0xF000 => {
                 match self.opcode & 0x00FF {
+                    //FX1e: Adds VX to I. VF is not affected
+                    0x001e => {
+                        let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                        let inc = self.V[VX];
+                        self.I += inc;
+                        self.pc += 2;
+                    }
                     // FX29: Sets I to the location of sprite in VX
                     0x0029 => {
                         let VX = ((self.opcode & 0x0F00) >> 8) as usize;
