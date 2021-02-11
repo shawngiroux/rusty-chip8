@@ -343,11 +343,22 @@ impl CPU {
             // FNNN: Opcodes for F parsed here
             0xF000 => {
                 match self.opcode & 0x00FF {
+                    // FX0A: A key press is awaited, and then stored in VX.
+                    // (Blocking Operation. All instruction halted until next
+                    // key event)
+                    0x000A => {
+                        // TODO Halt until key press
+                        self.pc += 2;
+                    }
                     //FX1e: Adds VX to I. VF is not affected
                     0x001e => {
                         let VX = ((self.opcode & 0x0F00) >> 8) as usize;
                         let inc = self.V[VX];
                         self.I += inc as u16;
+                        self.pc += 2;
+                    }
+                    0x0007 => {
+                        println!("Implement delay timer");
                         self.pc += 2;
                     }
                     0x0015 => {
