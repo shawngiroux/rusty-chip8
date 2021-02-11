@@ -311,11 +311,23 @@ impl CPU {
             }
             0xE000 => {
                 match self.opcode & 0x00FF {
-                    // EXA1: Skips the next instruction if the key stored in VX isn't
-                    // pressed. (Usually the next instruction is a jump to skip a code block)
-                    0x00a1 => {
+                    // EX9E: Skips the next instruction if the key stored in VX
+                    // is pressed. (Usually the next instruction is a jump to
+                    // skip a code block)
+                    0x009e => {
                         let VX = ((self.opcode & 0x0F00) >> 8) as u8;
                         if VX == self.k {
+                            self.pc += 4;
+                        } else {
+                            self.pc += 2;
+                        }
+                    }
+                    // EXA1: Skips the next instruction if the key stored in VX
+                    // isn't pressed. (Usually the next instruction is a jump
+                    // to skip a code block)
+                    0x00a1 => {
+                        let VX = ((self.opcode & 0x0F00) >> 8) as u8;
+                        if VX != self.k {
                             self.pc += 4;
                         } else {
                             self.pc += 2;
