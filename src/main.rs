@@ -207,9 +207,16 @@ impl CPU {
                     self.V[VX as usize] = (VX ^ VY) as u8;
                     self.pc += 2;
                 }
+                // 4XNN: Skips the next instruction if VX doesn't equal NN.
+                // (Usually the next instruction is a jump to skip a code block)
                 0x0004 => {
-                    CPU::debug_opcode(self.opcode, decode);
-                    process::exit(0x0100);
+                    let VX = (self.opcode & 0x0F00) >> 8;
+                    let VY = (self.opcode & 0x00F0) >> 4;
+
+                    self.V[VX as usize] =
+                        (self.V[VX as usize] + self.V[VY as usize]) % std::u8::MAX;
+
+                    self.pc += 2;
                 }
                 0x0005 => {
                     CPU::debug_opcode(self.opcode, decode);
