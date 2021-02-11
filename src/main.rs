@@ -158,6 +158,15 @@ impl CPU {
                     self.pc += 2;
                 }
             }
+            // 4XNN: Skip next instruction if VX does not equal NN
+            0x4000 => {
+                let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                if self.V[VX] != (self.opcode & 0x00FF) as u8 {
+                    self.pc += 4;
+                } else {
+                    self.pc += 2;
+                }
+            }
             // 6XNN: Sets VX to NN
             0x6000 => {
                 let VX = ((self.opcode & 0x0F00) >> 8) as usize;
