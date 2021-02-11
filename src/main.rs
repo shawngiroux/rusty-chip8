@@ -292,6 +292,15 @@ impl CPU {
                         self.I += inc as u16;
                         self.pc += 2;
                     }
+                    0x0015 => {
+                        println!("Implement delay timer");
+                        self.pc += 2;
+                    }
+                    // FX18: Sets the sound timer to VX
+                    0x0018 => {
+                        println!("Implement sound timer");
+                        self.pc += 2;
+                    }
                     // FX29: Sets I to the location of sprite in VX
                     0x0029 => {
                         let VX = ((self.opcode & 0x0F00) >> 8) as usize;
