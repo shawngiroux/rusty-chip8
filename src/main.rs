@@ -247,7 +247,7 @@ impl CPU {
 
                 self.V[VX] = (num & NN) as u8;
 
-                self.pc += 1;
+                self.pc += 2;
             }
             // DXYN: Draw at (Vx, Vy, N)
             0xD000 => {
