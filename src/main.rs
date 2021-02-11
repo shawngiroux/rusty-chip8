@@ -179,8 +179,8 @@ impl CPU {
             // 7XNN: Adds NN to VX
             0x7000 => {
                 let VX = ((self.opcode & 0x0F00) >> 8) as usize;
-                let NN = (self.opcode & 0x00FF) as u8;
-                self.V[VX] = (self.V[VX] + NN) % std::u8::MAX;
+                let NN = (self.opcode & 0x00FF);
+                self.V[VX] = (self.V[VX] as u16 + NN) as u8;
                 self.pc += 2;
             }
             0x8000 => match self.opcode & 0x000F {
