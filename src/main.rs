@@ -2,6 +2,8 @@
 extern crate minifb;
 
 use minifb::{Key, Window, WindowOptions};
+use rand::thread_rng;
+use rand::Rng;
 use std::fs::File;
 use std::io::Read;
 use std::process;
@@ -233,6 +235,19 @@ impl CPU {
                 self.I = (self.opcode & 0x0FFF);
                 println!("{}", self.I);
                 self.pc += 2;
+            }
+            // CXNN: Sets VX to the result of a bitwise and operation on a
+            // random number (Typically: 0 to 255) and NN.
+            0xC000 => {
+                let mut rng = thread_rng();
+                let num: u16 = rng.gen_range(0, 255);
+
+                let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                let NN = (self.opcode & 0x00FF);
+
+                self.V[VX] = (num & NN) as u8;
+
+                self.pc += 1;
             }
             // DXYN: Draw at (Vx, Vy, N)
             0xD000 => {
