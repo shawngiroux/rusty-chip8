@@ -192,13 +192,19 @@ impl CPU {
                     self.V[VX] = VY;
                     self.pc += 2;
                 }
+                // 8XY1: Sets VX to VX or VY. (Bitwise OR operation)
                 0x0001 => {
-                    CPU::debug_opcode(self.opcode, decode);
-                    process::exit(0x0100);
+                    let VX = (self.opcode & 0x0F00) >> 8;
+                    let VY = (self.opcode & 0x00F0) >> 4;
+                    self.V[VX as usize] = (VX | VY) as u8;
+                    self.pc += 2;
                 }
+                // 8XY2: Sets VX to VX and VY. (Bitwise AND operation)
                 0x0002 => {
-                    CPU::debug_opcode(self.opcode, decode);
-                    process::exit(0x0100);
+                    let VX = (self.opcode & 0x0F00) >> 8;
+                    let VY = (self.opcode & 0x00F0) >> 4;
+                    self.V[VX as usize] = (VX & VY) as u8;
+                    self.pc += 2;
                 }
                 // 8XY3: Sets VX to VX xor VY
                 0x0003 => {
@@ -207,8 +213,8 @@ impl CPU {
                     self.V[VX as usize] = (VX ^ VY) as u8;
                     self.pc += 2;
                 }
-                // 4XNN: Skips the next instruction if VX doesn't equal NN.
-                // (Usually the next instruction is a jump to skip a code block)
+                // 8XY4: Adds VY to VX. VF is set to 1 when there's a carry,
+                // and to 0 when there isn't.
                 0x0004 => {
                     let VX = (self.opcode & 0x0F00) >> 8;
                     let VY = (self.opcode & 0x00F0) >> 4;
@@ -218,13 +224,31 @@ impl CPU {
 
                     self.pc += 2;
                 }
+                // 8XY5: VY is subtracted from VX. VF is set to 0 when there's
+                // a borrow, and 1 when there isn't.
                 0x0005 => {
-                    CPU::debug_opcode(self.opcode, decode);
-                    process::exit(0x0100);
+                    let VX = (self.opcode & 0x0F00) >> 8;
+                    let VY = (self.opcode & 0x00F0) >> 4;
+
+                    self.V[VX as usize] =
+                        (self.V[VX as usize] - self.V[VY as usize]) % std::u8::MAX;
+
+                    self.pc += 2;
                 }
+                // 8XY6: Stores the least significant bit of VX in VF and then
+                // shifts VX to the right by 1.
                 0x0006 => {
-                    CPU::debug_opcode(self.opcode, decode);
-                    process::exit(0x0100);
+                    let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                    let VY = ((self.opcode & 0x00F0) >> 4) as usize;
+
+                    println!("Implement least significant bit into VF");
+
+                    println!("V[X]: {:#06x}", self.V[VX]);
+                    println!("V[Y]: {:#06x}", self.V[VY]);
+
+                    self.V[VX] = self.V[VY] << 1;
+
+                    self.pc += 2;
                 }
                 0x0007 => {
                     CPU::debug_opcode(self.opcode, decode);
