@@ -348,6 +348,11 @@ impl CPU {
                     // key event)
                     0x000A => {
                         // TODO Halt until key press
+                        while self.k == 0xff {
+                            println!("Waiting for key press");
+                        }
+                        let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                        self.V[VX] = self.k;
                         self.pc += 2;
                     }
                     //FX1e: Adds VX to I. VF is not affected
@@ -477,6 +482,31 @@ fn main() {
     let mut buffer: Vec<u32> = vec![0; width * height];
 
     while window.is_open() && !window.is_key_down(Key::Escape) {
+        window.get_keys().map(|keys| {
+            for t in keys {
+                match t {
+                    Key::Key1 => cpu.k = 0x0,
+                    Key::Key2 => cpu.k = 0x1,
+                    Key::Key3 => cpu.k = 0x2,
+                    Key::Key4 => cpu.k = 0x3,
+                    Key::Q => cpu.k = 0x4,
+                    Key::W => cpu.k = 0x5,
+                    Key::E => cpu.k = 0x6,
+                    Key::R => cpu.k = 0x7,
+                    Key::A => cpu.k = 0x8,
+                    Key::S => cpu.k = 0x9,
+                    Key::D => cpu.k = 0xa,
+                    Key::F => cpu.k = 0xb,
+                    Key::Z => cpu.k = 0xc,
+                    Key::X => cpu.k = 0xd,
+                    Key::C => cpu.k = 0xe,
+                    Key::V => cpu.k = 0xf,
+                    _ => cpu.k = 0xff,
+                }
+            }
+        });
+
+        println!("Current Key Register: {}", cpu.k);
         cpu.emulate_cycle();
 
         for (index, i) in cpu.gfx.iter_mut().enumerate() {
@@ -491,6 +521,7 @@ fn main() {
 
         // We unwrap here as we want this code to exit if it fails. Real applications may want to handle this in a different way
         window.update_with_buffer(&buffer, width, height).unwrap();
+        cpu.k = 0xff; // Reset key press
     }
     process::exit(0x0100);
 }
