@@ -266,6 +266,18 @@ impl CPU {
                     process::exit(0x0100);
                 }
             },
+            // 9XY0: Skips the next instruction if VX doesn't equal VY.
+            // (Usually the next instruction is a jump to skip a code block)
+            0x9000 => {
+                let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                let VY = ((self.opcode & 0x00F0) >> 4) as usize;
+
+                if self.V[VX] != self.V[VY] {
+                    self.pc += 4
+                } else {
+                    self.pc += 2
+                }
+            }
             // ANNN: Set I to address at NNN
             0xA000 => {
                 self.I = (self.opcode & 0x0FFF);
