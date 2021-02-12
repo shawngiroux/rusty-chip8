@@ -79,10 +79,6 @@ impl CPU {
             memory[start_loc + index] = *font as u16;
         }
 
-        // for (i, buf) in memory[..511].iter().enumerate() {
-        // println!("pos {}: {:#06x}", i, buf)
-        // }
-
         CPU {
             opcode: 0,
             memory: memory,
@@ -131,8 +127,6 @@ impl CPU {
                 0x0EE => {
                     self.sp -= 1;
                     self.pc = self.stack[self.sp as usize] as u16;
-                    println!("Subroutine Return: {}", self.stack[self.sp as usize]);
-                    println!("Stack: {:?} Stack Pos: {}", self.stack, self.sp);
                     self.pc += 2;
                 }
                 // 0NNN: Jump to machine code routine - Interpreter will ignore
@@ -154,8 +148,6 @@ impl CPU {
                 self.stack[self.sp as usize] = self.pc;
                 self.sp += 1;
                 self.pc = jump_loc;
-                println!("Subroutine Jump: {}", jump_loc);
-                println!("Stack: {:?} Stack Pos: {}", self.stack, self.sp);
             }
             // 3XNN: Skip next instruction if VX equals NN
             0x3000 => {
@@ -268,9 +260,7 @@ impl CPU {
             },
             // ANNN: Set I to address at NNN
             0xA000 => {
-                println!("{}", self.I);
                 self.I = (self.opcode & 0x0FFF);
-                println!("{}", self.I);
                 self.pc += 2;
             }
             // CXNN: Sets VX to the result of a bitwise and operation on a
@@ -310,8 +300,9 @@ impl CPU {
                         }
                     }
                 }
-                let mut line = String::new();
-                let _ = std::io::stdin().read_line(&mut line).unwrap();
+                //let mut line = String::new();
+                //let _ = std::io::stdin().read_line(&mut line).unwrap();
+                //process::exit(0x0100);
 
                 self.pc += 2;
             }
@@ -390,12 +381,7 @@ impl CPU {
                     // FX29: Sets I to the location of sprite in VX
                     0x0029 => {
                         let VX = ((self.opcode & 0x0F00) >> 8) as usize;
-                        println!("VX: {}", VX);
-                        println!("V: {:?}", self.V);
-
                         self.I = 0x50 + self.V[VX] as u16;
-                        println!("I: {}", self.I);
-                        println!("memory[{}]: {:?}", self.I, self.memory[self.I as usize]);
                         self.pc += 2;
                     }
                     // FX33: Store binary-coded decimal values in memory
@@ -415,9 +401,6 @@ impl CPU {
                     // written, but I itself is left unmodified.[d]
                     0x0055 => {
                         let VX = (self.opcode & 0x0F00) >> 8;
-                        println!("VX: {}", VX);
-                        println!("V: {:?}", self.V);
-
                         for x in 0..VX + 1 {
                             let V_index = x as usize;
                             let memory_index = (self.I + x) as usize;
@@ -430,9 +413,6 @@ impl CPU {
                     // I is increased by 1 each cycle, but is left unmodified
                     0x0065 => {
                         let VX = (self.opcode & 0x0F00) >> 8;
-                        println!("VX: {}", VX);
-                        println!("V: {:?}", self.V);
-
                         for x in 0..VX + 1 {
                             let V_index = x as usize;
                             let memory_index = (self.I + x) as usize;
@@ -527,9 +507,7 @@ fn main() {
                 color = pixel_color_white;
             }
             buffer[index] = color;
-            //*i = std::u32::MAX; // write something more funny here!
         }
-        //println!("{:?}", buffer);
 
         // We unwrap here as we want this code to exit if it fails. Real applications may want to handle this in a different way
         window.update_with_buffer(&buffer, width, height).unwrap();
