@@ -28,12 +28,16 @@ struct CPU {
     // I and Program Counter
     I: u16,
     pc: u16,
+
     k: u8,
 
     // Maintains current location
     // before jumps are performed
     stack: [u16; 16],
     sp: u8,
+
+    delay_timer: u8,
+    sound_timer: u8,
 }
 
 impl CPU {
@@ -91,6 +95,8 @@ impl CPU {
             stack: [0x0000; 16],
             sp: 0,
             k: 0,
+            delay_timer: 0,
+            sound_timer: 0,
         }
     }
 
@@ -362,17 +368,23 @@ impl CPU {
                         self.I += inc as u16;
                         self.pc += 2;
                     }
+                    // FX07: Store the current value of the delay timer in
+                    // register VX
                     0x0007 => {
-                        println!("Implement delay timer");
+                        let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                        self.V[VX] = self.delay_timer;
                         self.pc += 2;
                     }
+                    // FX15: Set the delay timer to the value of register VX
                     0x0015 => {
-                        println!("Implement delay timer");
+                        let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                        self.delay_timer = self.V[VX];
                         self.pc += 2;
                     }
                     // FX18: Sets the sound timer to VX
                     0x0018 => {
-                        println!("Implement sound timer");
+                        let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                        self.sound_timer = self.V[VX];
                         self.pc += 2;
                     }
                     // FX29: Sets I to the location of sprite in VX
@@ -521,6 +533,18 @@ fn main() {
 
         // We unwrap here as we want this code to exit if it fails. Real applications may want to handle this in a different way
         window.update_with_buffer(&buffer, width, height).unwrap();
+
+        if cpu.delay_timer > 0 {
+            cpu.delay_timer -= 1;
+        }
+
+        if cpu.sound_timer > 0 {
+            cpu.sound_timer -= 1;
+            if cpu.sound_timer == 1 {
+                println!("BEEP!");
+            }
+        }
+
         cpu.k = 0xff; // Reset key press
     }
     process::exit(0x0100);
