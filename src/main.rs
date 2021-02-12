@@ -254,6 +254,8 @@ impl CPU {
 
                     self.pc += 2;
                 }
+                // 8XY7: Sets VX to VY minus VX. VF is set to 0 when there's a
+                // borrow, and 1 when there isn't.
                 0x0007 => {
                     CPU::debug_opcode(self.opcode, decode);
                     process::exit(0x0100);
