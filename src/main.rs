@@ -199,9 +199,9 @@ impl CPU {
                 }
                 // 8XY2: Sets VX to VX and VY. (Bitwise AND operation)
                 0x0002 => {
-                    let VX = (self.opcode & 0x0F00) >> 8;
-                    let VY = (self.opcode & 0x00F0) >> 4;
-                    self.V[VX as usize] = (VX & VY) as u8;
+                    let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                    let VY = ((self.opcode & 0x00F0) >> 4) as usize;
+                    self.V[VX] = (self.V[VX] & self.V[VY]) as u8;
                     self.pc += 2;
                 }
                 // 8XY3: Sets VX to VX xor VY
