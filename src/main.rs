@@ -217,8 +217,11 @@ impl CPU {
                     let VX = (self.opcode & 0x0F00) >> 8;
                     let VY = (self.opcode & 0x00F0) >> 4;
 
-                    self.V[VX as usize] =
-                        (self.V[VX as usize] + self.V[VY as usize]) % std::u8::MAX;
+                    let add = self.V[VX as usize] as u16 + self.V[VY as usize] as u16;
+
+                    self.V[0xf] = if add > 255 { 1 } else { 0 };
+
+                    self.V[VX as usize] = add as u8;
 
                     self.pc += 2;
                 }
@@ -228,8 +231,11 @@ impl CPU {
                     let VX = (self.opcode & 0x0F00) >> 8;
                     let VY = (self.opcode & 0x00F0) >> 4;
 
-                    self.V[VX as usize] =
-                        (self.V[VX as usize] - self.V[VY as usize]) % std::u8::MAX;
+                    let sub = ((self.V[VX as usize] as i16) - (self.V[VY as usize] as i16));
+
+                    self.V[0xf] = if sub < 0 { 0 } else { 1 };
+
+                    self.V[VX as usize] = sub as u8;
 
                     self.pc += 2;
                 }
