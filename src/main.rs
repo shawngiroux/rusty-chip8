@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 extern crate minifb;
 
-use minifb::{Key, Window, WindowOptions};
+use minifb::{Key, Scale, Window, WindowOptions};
 use rand::thread_rng;
 use rand::Rng;
 use std::fs::File;
@@ -483,7 +483,11 @@ fn main() {
         "Chip-8 - Press ESC to exit",
         width,
         height,
-        WindowOptions::default(),
+        WindowOptions {
+            //resize: true,
+            scale: Scale::X16,
+            ..WindowOptions::default()
+        },
     )
     .expect("Unable to create window");
 
