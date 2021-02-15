@@ -405,7 +405,7 @@ impl CPU {
                     // FX29: Sets I to the location of sprite in VX
                     0x0029 => {
                         let VX = ((self.opcode & 0x0F00) >> 8) as usize;
-                        self.I = 0x50 + self.V[VX] as u16;
+                        self.I = 80 + (self.V[VX] * 5) as u16;
                         self.pc += 2;
                     }
                     // FX33: Store binary-coded decimal values in memory
