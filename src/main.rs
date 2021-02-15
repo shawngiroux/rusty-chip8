@@ -497,8 +497,12 @@ fn main() {
 
     // Limit to max ~60 fps update rate
     window.limit_update_rate(Some(std::time::Duration::from_micros(16600)));
+
+    // Pixel colors
     let pixel_color_white = std::u32::MAX;
     let pixel_color_black = 0;
+
+    // Abstraction for displaying graphics
     let mut buffer: Vec<u32> = vec![0; width * height];
 
     while window.is_open() && !window.is_key_down(Key::Escape) {
