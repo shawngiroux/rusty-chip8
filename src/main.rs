@@ -338,6 +338,7 @@ impl CPU {
                         } else {
                             self.pc += 2;
                         }
+                        self.k = 0xff; // Reset key press
                     }
                     // EXA1: Skips the next instruction if the key stored in VX
                     // isn't pressed. (Usually the next instruction is a jump
@@ -349,6 +350,7 @@ impl CPU {
                         } else {
                             self.pc += 2;
                         }
+                        self.k = 0xff; // Reset key press
                     }
                     _ => {
                         println!("Undetermined Opcode!");
@@ -370,6 +372,8 @@ impl CPU {
                         }
                         let VX = ((self.opcode & 0x0F00) >> 8) as usize;
                         self.V[VX] = self.k;
+
+                        self.k = 0xff; // Reset key press
                         self.pc += 2;
                     }
                     //FX1e: Adds VX to I. VF is not affected
@@ -546,8 +550,6 @@ fn main() {
                 println!("BEEP!");
             }
         }
-
-        cpu.k = 0xff; // Reset key press
     }
     process::exit(0x0100);
 }
