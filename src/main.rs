@@ -167,6 +167,17 @@ impl CPU {
                     self.pc += 2;
                 }
             }
+            // 5XY0: Skips the next instruction if VX equals VY. (Usually the
+            // next instruction is a jump to skip a code block)
+            0x5000 => {
+                let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                let VY = ((self.opcode & 0x00F0) >> 4) as usize;
+                if self.V[VX] == self.V[VY] {
+                    self.pc += 4;
+                } else {
+                    self.pc += 2;
+                }
+            }
             // 6XNN: Sets VX to NN
             0x6000 => {
                 let VX = ((self.opcode & 0x0F00) >> 8) as usize;
