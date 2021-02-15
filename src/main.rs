@@ -256,12 +256,8 @@ impl CPU {
                     let VX = ((self.opcode & 0x0F00) >> 8) as usize;
                     let VY = ((self.opcode & 0x00F0) >> 4) as usize;
 
-                    println!("Implement least significant bit into VF");
-
-                    println!("V[X]: {:#06x}", self.V[VX]);
-                    println!("V[Y]: {:#06x}", self.V[VY]);
-
-                    self.V[VX] = self.V[VY] << 1;
+                    self.V[0xF] = self.V[VX] & 0b0001;
+                    self.V[VX] = self.V[VY] >> 1;
 
                     self.pc += 2;
                 }
@@ -270,6 +266,17 @@ impl CPU {
                 0x0007 => {
                     CPU::debug_opcode(self.opcode, decode);
                     process::exit(0x0100);
+                }
+                // 8XYE: Stores the most significant bit of VX in VF and then
+                // shifts VX to the left by 1.
+                0x000E => {
+                    let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                    let VY = ((self.opcode & 0x00F0) >> 4) as usize;
+
+                    self.V[0xF] = self.V[VX] >> 3;
+                    self.V[VX] = self.V[VY] << 1;
+
+                    self.pc += 2;
                 }
                 _ => {
                     println!("0x8XYN Undetermined Opcode!");
