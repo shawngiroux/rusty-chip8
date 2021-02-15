@@ -384,15 +384,14 @@ impl CPU {
                     // (Blocking Operation. All instruction halted until next
                     // key event)
                     0x000A => {
-                        // TODO Halt until key press
-                        while self.k == 0xff {
-                            println!("Waiting for key press");
+                        println!("Waiting for key press");
+                        println!("{} != 255", self.k);
+                        if self.k != 0xff {
+                            self.pc += 2;
+                            let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                            self.V[VX] = self.k;
                         }
-                        let VX = ((self.opcode & 0x0F00) >> 8) as usize;
-                        self.V[VX] = self.k;
-
                         self.k = 0xff; // Reset key press
-                        self.pc += 2;
                     }
                     //FX1e: Adds VX to I. VF is not affected
                     0x001e => {
@@ -572,6 +571,7 @@ fn main() {
                 println!("BEEP!");
             }
         }
+        cpu.k = 0xff; // Reset key press
     }
     process::exit(0x0100);
 }
