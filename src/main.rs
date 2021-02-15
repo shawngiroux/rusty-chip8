@@ -192,9 +192,9 @@ impl CPU {
                 }
                 // 8XY1: Sets VX to VX or VY. (Bitwise OR operation)
                 0x0001 => {
-                    let VX = (self.opcode & 0x0F00) >> 8;
-                    let VY = (self.opcode & 0x00F0) >> 4;
-                    self.V[VX as usize] = (VX | VY) as u8;
+                    let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                    let VY = ((self.opcode & 0x00F0) >> 4) as usize;
+                    self.V[VX as usize] = (self.V[VX] | self.V[VY]) as u8;
                     self.pc += 2;
                 }
                 // 8XY2: Sets VX to VX and VY. (Bitwise AND operation)
@@ -206,9 +206,9 @@ impl CPU {
                 }
                 // 8XY3: Sets VX to VX xor VY
                 0x0003 => {
-                    let VX = (self.opcode & 0x0F00) >> 8;
-                    let VY = (self.opcode & 0x00F0) >> 4;
-                    self.V[VX as usize] = (VX ^ VY) as u8;
+                    let VX = ((self.opcode & 0x0F00) >> 8) as usize;
+                    let VY = ((self.opcode & 0x00F0) >> 4) as usize;
+                    self.V[VX as usize] = (self.V[VX] ^ self.V[VY]) as u8;
                     self.pc += 2;
                 }
                 // 8XY4: Adds VY to VX. VF is set to 1 when there's a carry,
